@@ -25,11 +25,12 @@ app.post('/', jsonParser, function (req, res) {
         return res.sendStatus(400);
     }
 
-    var correctEntry = filter.checkEntry(req.body.sys.id);
+    var desiredUpdate = filter.checkEntry(req.body.sys.id);
+    desiredUpdate = filter.allowAsset(req.body.sys.type);
 
     // check for publish notifications
     if (req.rawHeaders.indexOf('ContentManagement.Entry.publish') > -1 &&
-            correctEntry) {
+            desiredUpdate) {
         var key = req.body.sys.id;
 
         if (entryCache.get(key) !== true) {

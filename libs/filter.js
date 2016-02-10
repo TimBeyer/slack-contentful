@@ -1,15 +1,13 @@
 'use strict';
 
-var dotenv = require('dotenv');
+var config = require('./config');
 var nodeUtil = require('util');
-
-dotenv.load();
 
 // Declare Contentful entries of what you want to be notified of
 module.exports = (function () {
     var model = {
         entryList: [],
-        entryString: process.env.ENTRIES
+        entryString: config.entries
     };
 
     var action = {
@@ -60,6 +58,15 @@ module.exports = (function () {
             }
 
             return false;
+        },
+
+        /**
+         * Figure out if assets should be tracked
+         * @param  {string} entryType the entry type
+         * @return {boolean}           true if it should be allowed, false otherwise
+         */
+        allowAsset: function (entryType) {
+            return (config.trackAssets) ? entryType === 'Asset' : false;
         }
     };
 
@@ -67,6 +74,7 @@ module.exports = (function () {
         getEntries: action.getEntries,
         checkEntry: action.checkEntry,
         getEntryString: action.getEntryString,
-        isEntryDefined: action.isEntryDefined
+        isEntryDefined: action.isEntryDefined,
+        allowAsset: action.allowAsset
     };
 })();
